@@ -16,7 +16,7 @@ class KalmanFilterMotionModel:
         self.inst_type = inst_type
 
         self.kf = KalmanFilter(dim_x=10, dim_z=7) 
-        self.kf.x[:7] = BBox.bbox2array(bbox)[:7].reshape((7, 1))
+        self.kf.x[:7] = BBox.bbox2array(bbox)[:7].reshape((7, 1))       #filter state estimate
         self.kf.F = np.array([[1,0,0,0,0,0,0,1,0,0],      # state transition matrix
                               [0,1,0,0,0,0,0,0,1,0],
                               [0,0,1,0,0,0,0,0,0,1],
@@ -61,11 +61,11 @@ class KalmanFilterMotionModel:
         #                       [0,0,0,0,0,0,1,0,0,0,0]])
 
         self.covariance_type = covariance
-        # self.kf.R[0:,0:] *= 10.   # measurement uncertainty
-        self.kf.P[7:, 7:] *= 1000. 	# state uncertainty, give high uncertainty to the unobservable initial velocities, covariance matrix
+        # self.kf.R[0:,0:] *= 10.   # measurement uncertainty/noise
+        self.kf.P[7:, 7:] *= 1000. 	# covariance matrix: give high uncertainty to the unobservable initial velocities, tate uncertainty
         self.kf.P *= 10.
 
-        # self.kf.Q[-1,-1] *= 0.01    # process uncertainty
+        # self.kf.Q[-1,-1] *= 0.01    # process uncertainty/noise
         # self.kf.Q[7:, 7:] *= 0.01
 
         self.history = [bbox]
